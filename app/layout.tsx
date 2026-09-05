@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import { AppProviders } from "@/components/app-providers";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import "./globals.css";
@@ -76,6 +77,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <GoogleAnalytics />
         <AppProviders>
           <SiteHeader />
           <div className="flex min-h-0 flex-1 flex-col">{children}</div>
