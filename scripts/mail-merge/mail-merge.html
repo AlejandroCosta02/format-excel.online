@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automated Mail Merge Tool (Official Engine)</title>
+    
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/pizzip@3.0.6/dist/pizzip.min.js"></script>
+    <script src="https://unpkg.com/docxtemplater@3.48.0/build/docxtemplater.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #16a34a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            flex: 1;
+        }
+
+        /* --- Estilos Header Minimalista --- */
+        header {
+            margin-bottom: 3rem;
+            text-align: left;
+        }
+
+        header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.025em;
+        }
+
+        header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin: 0 0 1.5rem 0;
+        }
+
+        .instructions-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .instructions-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .instructions-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .instructions-list li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.25rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+
+        .tag-example {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            padding: 0.125rem 0.35rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* --- Layout Grid --- */
+        .upload-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .upload-card {
+            background: var(--card-bg);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .upload-card:hover {
+            border-color: var(--primary);
+            background: #f1f5f9;
+        }
+
+        .upload-card h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.1rem;
+            color: #0f172a;
+        }
+
+        .upload-card p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .upload-card input[type="file"] {
+            display: none;
+        }
+
+        .file-list {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--success);
+            text-align: left;
+            max-height: 120px;
+            overflow-y: auto;
+            font-weight: 500;
+        }
+
+        /* --- Paneles y Tablas --- */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            color: #0f172a;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            margin-bottom: 2.5rem;
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        th, td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        th { 
+            background-color: #f1f5f9; 
+            font-weight: 600; 
+            color: #334155;
+        }
+
+        select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background-color: #fff;
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        select:focus {
+            border-color: var(--primary);
+        }
+
+        /* --- Botones --- */
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+
+        .download-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .btn-download {
+            background-color: #475569;
+            text-align: left;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-download:hover { background-color: #334155; }
+        
+        .btn-master {
+            background-color: var(--success);
+            font-weight: bold;
+            text-align: center;
+        }
+        .btn-master:hover { background-color: #15803d; }
+
+        h4 {
+            color: #334155;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        /* --- Estilos Footer Minimalista --- */
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            background: var(--card-bg);
+            margin-top: auto;
+        }
+
+        footer span {
+            color: #e11d48;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Mail Merge Tool</h1>
+        <p class="subtitle">Follow these quick preparation steps to ensure a flawless document generation:</p>
+        
+        <ul class="instructions-list">
+            <li><strong>Data Prep:</strong> Download your data file from Lat2.0 and remove all unsold rows.</li>
+            <li><strong>Custom Fields:</strong> If required, ensure your <em>Section</em> and <em>Desk #</em> columns are explicitly added.</li>
+            <li><strong>Template Margins:</strong> Verify that your Word templates contain no accidental empty spacing at the very top or bottom.</li>
+            <li><strong>Placeholder Format:</strong> All dynamic tags must be strictly enclosed in single curly braces. <code class="tag-example">{GUEST_NAME}</code>, <code class="tag-example">{FOLIO}</code>, etc.</li>
+        </ul>
+    </header>
+
+    <div class="upload-grid">
+        <div class="upload-card" onclick="document.getElementById('excelInput').click()">
+            <h3>1. Data Source</h3>
+            <p>Click to upload Excel or CSV file</p>
+            <input type="file" id="excelInput" accept=".xlsx, .xls, .csv">
+            <div id="excelName" class="file-list"></div>
+        </div>
+
+        <div class="upload-card" onclick="document.getElementById('templateInput').click()">
+            <h3>2. Word Templates</h3>
+            <p>Click to upload multiple .docx templates</p>
+            <input type="file" id="templateInput" accept=".docx" multiple>
+            <div id="templateFiles" class="file-list"></div>
+        </div>
+    </div>
+
+    <div id="mappingPanel" class="panel">
+        <div class="section-title">Template Mapping Allocation</div>
+        <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">Note: Unmapped rows are ignored completely. Leaving tours empty will skip them.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tour Name (Detected from Data)</th>
+                    <th>Target Word Template (Select Match)</th>
+                </tr>
+            </thead>
+            <tbody id="mappingTableBody">
+            </tbody>
+        </table>
+        <button id="processBtn" class="btn" onclick="processDocuments()">Generate Documents</button>
+    </div>
+
+    <div id="downloadPanel" class="panel">
+        <div class="section-title">Download Center</div>
+        <p style="margin-bottom: 1rem; color: #64748b;">The generation is complete. Download your consolidated files below:</p>
+        
+        <h4>Individual Packages (By Template Used):</h4>
+        <div id="individualDownloads" class="download-group">
+        </div>
+
+        <h4 style="margin-top: 1.5rem;">Master Document (All-In-One):</h4>
+        <div class="download-group">
+            <button id="masterDownloadBtn" class="btn btn-master">DOWNLOAD ALL COMBINED PACKAGES (.docx)</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 Alejandro Costa SEA &mdash; Handcrafted with <span>&hearts;</span> and dedication.
+</footer>
+
+<script>
+    let excelData = [];
+    let uniqueTours = [];
+    let wordTemplates = {}; 
+
+    // 1. Procesamiento de Excel
+    document.getElementById('excelInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('excelName').innerText = `📄 ${file.name}`;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            
+            excelData = XLSX.utils.sheet_to_json(worksheet);
+            
+            const tours = excelData.map(row => row['Tour Name'] ? String(row['Tour Name']).trim() : null).filter(Boolean);
+            uniqueTours = [...new Set(tours)];
+            
+            checkRequirements();
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    // 2. Procesamiento de Plantillas Word
+    document.getElementById('templateInput').addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length === 0) return;
+        
+        const listDiv = document.getElementById('templateFiles');
+        listDiv.innerHTML = '';
+        wordTemplates = {};
+
+        let loadedCount = 0;
+        Array.from(files).forEach(file => {
+            listDiv.innerHTML += `📄 ${file.name}<br>`;
+            
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                wordTemplates[file.name] = evt.target.result;
+                loadedCount++;
+                if (loadedCount === files.length) {
+                    checkRequirements();
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    });
+
+    function checkRequirements() {
+        if (excelData.length > 0 && Object.keys(wordTemplates).length > 0) {
+            buildMappingTable();
+        }
+    }
+
+    function buildMappingTable() {
+        const tbody = document.getElementById('mappingTableBody');
+        tbody.innerHTML = '';
+
+        uniqueTours.forEach((tour) => {
+            const tr = document.createElement('tr');
+            
+            const tdTour = document.createElement('td');
+            tdTour.innerText = tour;
+            tr.appendChild(tdTour);
+
+            const tdSelect = document.createElement('td');
+            const select = document.createElement('select');
+            select.className = 'mapping-select';
+            select.dataset.tour = tour;
+            
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.innerText = '-- Skip this Tour (No Template) --';
+            select.appendChild(defaultOpt);
+
+            Object.keys(wordTemplates).forEach(filename => {
+                const opt = document.createElement('option');
+                opt.value = filename;
+                opt.innerText = filename;
+                select.appendChild(opt);
+            });
+
+            tdSelect.appendChild(select);
+            tr.appendChild(tdSelect);
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('mappingPanel').style.display = 'block';
+        document.getElementById('downloadPanel').style.display = 'none';
+    }
+
+    // --- MOTOR PRINCIPAL DE COMBINACIÓN (OFFICIAL REPLACEMENT) ---
+    async function processDocuments() {
+        const selects = document.querySelectorAll('.mapping-select');
+        const mapping = {};
+        let atLeastOneMapped = false;
+
+        selects.forEach(select => {
+            mapping[select.dataset.tour] = select.value;
+            if (select.value) atLeastOneMapped = true;
+        });
+
+        if (!atLeastOneMapped) {
+            alert('Please assign a template to at least one Tour Name before generating.');
+            return;
+        }
+
+        const processBtn = document.getElementById('processBtn');
+        processBtn.disabled = true;
+        processBtn.innerText = 'Processing... Please wait';
+
+        const templatePackages = {}; 
+        const masterPackageDocs = [];
+        let baseTemplateBuffer = null;
+        let totalProcessedRows = 0;
+
+        excelData.forEach(row => {
+            if (!row['Tour Name']) return;
+            
+            const tourName = String(row['Tour Name']).trim();
+            const targetTemplateName = mapping[tourName];
+
+            if (!targetTemplateName || !wordTemplates[targetTemplateName]) return;
+
+            if (!baseTemplateBuffer) {
+                baseTemplateBuffer = wordTemplates[targetTemplateName];
+            }
+
+            try {
+                const zip = new window.PizZip(wordTemplates[targetTemplateName].slice(0));
+                const doc = new window.docxtemplater(zip, {
+                    paragraphLoop: true,
+                    linebreaks: true
+                });
+
+                let rowDataWithVariations = { ...row };
+                for (let key in row) {
+                    const upperKey = key.toUpperCase();
+                    const underscoreKey = key.replace(/[^a-zA-Z0-9]/g, '_');
+                    const underscoreKeyUpper = underscoreKey.toUpperCase();
+                    
+                    rowDataWithVariations[upperKey] = row[key];
+                    rowDataWithVariations[underscoreKey] = row[key];
+                    rowDataWithVariations[underscoreKeyUpper] = row[key];
+                }
+
+                doc.render(rowDataWithVariations);
+                
+                const docXmlText = doc.getZip().file("word/document.xml").asText();
+
+                if (!templatePackages[targetTemplateName]) {
+                    templatePackages[targetTemplateName] = [];
+                }
+                
+                const bodyContent = extractBodyContent(docXmlText);
+                templatePackages[targetTemplateName].push(bodyContent);
+                masterPackageDocs.push(bodyContent);
+                totalProcessedRows++;
+
+            } catch (error) {
+                console.error("Error processing row entry structure:", error);
+            }
+        });
+
+        alert(`Process finished! Total guest letters generated: ${totalProcessedRows}`);
+
+        const individualDiv = document.getElementById('individualDownloads');
+        individualDiv.innerHTML = '';
+
+        for (const templateName in templatePackages) {
+            if (templatePackages[templateName].length === 0) continue;
+
+            const joinedBody = templatePackages[templateName].join('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+            const finalBlob = createBlobFromXml(wordTemplates[templateName], joinedBody);
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-download';
+            btn.innerText = `Download "${templateName.replace('.docx', '')}" Package (${templatePackages[templateName].length} Pages Included)`;
+            btn.onclick = () => triggerDownload(finalBlob, `${templateName.replace('.docx', '')}_Package.docx`);
+            individualDiv.appendChild(btn);
+        }
+
+        if (masterPackageDocs.length > 0 && baseTemplateBuffer) {
+            const masterJoinedBody = masterPackageDocs.join('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+            const masterBlob = createBlobFromXml(baseTemplateBuffer, masterJoinedBody);
+            
+            const masterBtn = document.getElementById('masterDownloadBtn');
+            masterBtn.innerText = `DOWNLOAD ALL COMBINED PACKAGES (${masterPackageDocs.length} PAGES TOTAL)`;
+            masterBtn.onclick = () => triggerDownload(masterBlob, `Master_Combined_Package.docx`);
+            masterBtn.style.display = 'block';
+        } else {
+            document.getElementById('masterDownloadBtn').style.display = 'none';
+        }
+
+        document.getElementById('downloadPanel').style.display = 'block';
+        processBtn.disabled = false;
+        processBtn.innerText = 'Generate Documents';
+        document.getElementById('downloadPanel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function extractBodyContent(xmlString) {
+        const startTag = '<w:body>';
+        const endTag = '</w:body>';
+        const startIndex = xmlString.indexOf(startTag) + startTag.length;
+        const endIndex = xmlString.indexOf(endTag);
+        let bodyHTML = xmlString.substring(startIndex, endIndex);
+        
+        bodyHTML = bodyHTML.replace(/<w:sectPr[^]*?<\/w:sectPr>/g, '');
+        return bodyHTML;
+    }
+
+    function createBlobFromXml(baseTemplateBuffer, combinedBodyXml) {
+        const zip = new window.PizZip(baseTemplateBuffer.slice(0));
+        const originalXml = zip.file("word/document.xml").asText();
+        
+        const startTag = '<w:body>';
+        const endTag = '</w:body>';
+        const startIndex = originalXml.indexOf(startTag) + startTag.length;
+        const endIndex = originalXml.indexOf(endTag);
+        
+        const sectPrMatch = originalXml.substring(startIndex, endIndex).match(/<w:sectPr[^]*?<\/w:sectPr>/);
+        const sectPr = sectPrMatch ? sectPrMatch[0] : '';
+
+        const newDocumentXml = originalXml.substring(0, startIndex) + combinedBodyXml + sectPr + originalXml.substring(endIndex);
+        
+        zip.file("word/document.xml", newDocumentXml);
+        return zip.generate({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+    }
+
+    function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+</script>
+
+</body>
+</html>

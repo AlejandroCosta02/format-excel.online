@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurable Manifest Extractor</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-hover: #1a365d;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-color: #2d3748;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        h1 { text-align: center; color: var(--primary-color); margin-bottom: 25px; font-size: 24px; }
+        #drop-zone {
+            border: 2px dashed #90cdf4;
+            background-color: #ebf8ff;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+        #drop-zone.dragover { border-color: var(--primary-color); }
+        label { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #4a5568; display: block; }
+        select, textarea, input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+        }
+        textarea { min-height: 80px; }
+        .form-section { display: none; flex-direction: column; gap: 14px; }
+        .form-section.visible { display: flex; }
+        .columns-box { max-height: 160px; overflow: auto; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; }
+        .btn {
+            color: white; border: none; padding: 12px 24px; border-radius: 6px;
+            font-size: 16px; font-weight: 600; cursor: pointer; background: var(--primary-color);
+        }
+        .btn:disabled { background: #cbd5e0; cursor: not-allowed; }
+        .file-status { display: none; padding: 10px; border-radius: 6px; margin-bottom: 16px; }
+        .status-success { display: block; background: #c6f6d5; color: #22543d; }
+        .result-info { display: none; margin-top: 12px; white-space: pre-line; padding: 12px; background: #edf2f7; border-radius: 6px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Configurable Manifest Extractor</h1>
+    <div id="drop-zone">
+        <p><strong>Drag & drop a spreadsheet</strong> or click to browse</p>
+        <span>Accepted: .xlsx, .xls, .csv</span>
+        <input type="file" id="file-input" accept=".xlsx,.xls,.csv" style="display:none">
+    </div>
+    <div id="file-status" class="file-status"></div>
+    <div id="form-section" class="form-section">
+        <div>
+            <label for="target-column">Key column</label>
+            <select id="target-column"></select>
+        </div>
+        <div>
+            <label for="search-query">Values to extract (comma or newline separated)</label>
+            <textarea id="search-query" placeholder="409085, 409080"></textarea>
+        </div>
+        <div>
+            <label>Output columns</label>
+            <div id="output-columns" class="columns-box"></div>
+        </div>
+        <button id="btn-process" class="btn" disabled>Extract &amp; download .xlsx</button>
+    </div>
+    <div id="result-info" class="result-info"></div>
+</div>
+<script>
+    const dropZone = document.getElementById("drop-zone");
+    const fileInput = document.getElementById("file-input");
+    const fileStatus = document.getElementById("file-status");
+    const formSection = document.getElementById("form-section");
+    const targetSelect = document.getElementById("target-column");
+    const searchQuery = document.getElementById("search-query");
+    const outputBox = document.getElementById("output-columns");
+    const btnProcess = document.getElementById("btn-process");
+    const resultInfo = document.getElementById("result-info");
+
+    /** @type {{ headerRowIndex: number, columns: string[], matrix: any[][] } | null} */
+    let loaded = null;
+
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.classList.add("dragover"); });
+    dropZone.addEventListener("dragleave", () => dropZone.classList.remove("dragover"));
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("dragover");
+        if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener("change", (e) => {
+        if (e.target.files[0]) handleFile(e.target.files[0]);
+    });
+    searchQuery.addEventListener("input", validateForm);
+
+    function cellText(value) {
+        return value === undefined || value === null ? "" : String(value).trim();
+    }
+
+    function uniqueColumnNames(cells) {
+        let last = -1;
+        cells.forEach((c, i) => { if (cellText(c)) last = i; });
+        const used = new Set();
+        const names = [];
+        for (let i = 0; i <= last; i++) {
+            const base = cellText(cells[i]) || ("Column " + (i + 1));
+            let name = base;
+            let n = 2;
+            while (used.has(name)) { name = base + " (" + n + ")"; n += 1; }
+            used.add(name);
+            names.push(name);
+        }
+        return names;
+    }
+
+    function detectManifestColumns(matrix) {
+        const limit = Math.min(matrix.length, 40);
+        for (let i = 0; i < limit; i++) {
+            const compact = (matrix[i] || []).map((c) => cellText(c).toLowerCase().replace(/\s/g, ""));
+            if (compact.includes("guestname") && compact.includes("tour#")) {
+                return { headerRowIndex: i, columns: uniqueColumnNames(matrix[i] || []) };
+            }
+        }
+        for (let i = 0; i < limit; i++) {
+            const filled = (matrix[i] || []).map(cellText).filter(Boolean);
+            if (filled.length < 2) continue;
+            const numeric = filled.filter((c) => /^-?\d+([.,]\d+)?$/.test(c)).length;
+            if (numeric / filled.length < 0.6) {
+                return { headerRowIndex: i, columns: uniqueColumnNames(matrix[i] || []) };
+            }
+        }
+        return { headerRowIndex: 0, columns: uniqueColumnNames(matrix[0] || []) };
+    }
+
+    /**
+     * @param {any[][]} matrix
+     * @param {{ targetColumn: string, searchQuery: string[], outputColumns?: string[] }} options
+     * @param {{ headerRowIndex: number, columns: string[] }} schema
+     */
+    function extractRows(matrix, options, schema) {
+        const targetIndex = schema.columns.findIndex(
+            (c) => c.trim().toLowerCase() === options.targetColumn.trim().toLowerCase()
+        );
+        if (targetIndex < 0) throw new Error("Unknown column: " + options.targetColumn);
+        const queries = options.searchQuery.map((q) => q.trim().toLowerCase()).filter(Boolean);
+        const wanted = (options.outputColumns && options.outputColumns.length)
+            ? options.outputColumns
+            : schema.columns;
+        const rows = [];
+        for (let i = schema.headerRowIndex + 1; i < matrix.length; i++) {
+            const row = matrix[i] || [];
+            const needle = cellText(row[targetIndex]).toLowerCase();
+            if (!queries.some((q) => needle === q)) continue;
+            const record = {};
+            wanted.forEach((header) => {
+                const idx = schema.columns.indexOf(header);
+                record[header] = idx >= 0 ? cellText(row[idx]) : "";
+            });
+            rows.push(record);
+        }
+        return { headers: wanted, rows };
+    }
+
+    function parseSearchQuery(raw) {
+        return [...new Set(String(raw).split(/[\n,;]+/).map((s) => s.trim()).filter(Boolean))];
+    }
+
+    function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const workbook = XLSX.read(new Uint8Array(e.target.result), { type: "array", raw: false });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const matrix = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+            const schema = detectManifestColumns(matrix);
+            loaded = { matrix, ...schema };
+            fileStatus.textContent = "Loaded: " + file.name + " (" + schema.columns.length + " columns)";
+            fileStatus.className = "file-status status-success";
+            formSection.classList.add("visible");
+            targetSelect.innerHTML = schema.columns.map((c) => {
+                const opt = document.createElement("option");
+                opt.value = c;
+                opt.textContent = c;
+                return opt.outerHTML;
+            }).join("");
+            outputBox.innerHTML = schema.columns.map((c) =>
+                '<label style="font-weight:400;margin:4px 0"><input type="checkbox" checked value="' +
+                c.replace(/"/g, "&quot;") + '"> ' + c + "</label>"
+            ).join("");
+            validateForm();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function validateForm() {
+        btnProcess.disabled = !(loaded && parseSearchQuery(searchQuery.value).length > 0);
+    }
+
+    btnProcess.addEventListener("click", async () => {
+        if (!loaded) return;
+        const outputColumns = [...outputBox.querySelectorAll("input:checked")].map((el) => el.value);
+        const table = extractRows(loaded.matrix, {
+            targetColumn: targetSelect.value,
+            searchQuery: parseSearchQuery(searchQuery.value),
+            outputColumns
+        }, loaded);
+        if (table.rows.length === 0) {
+            alert("No matching rows.");
+            return;
+        }
+        const workbook = new ExcelJS.Workbook();
+        const ws = workbook.addWorksheet("Extract");
+        ws.columns = table.headers.map((h) => ({ header: h, key: h, width: 18 }));
+        table.rows.forEach((row) => ws.addRow(row));
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        }), "extraction.xlsx");
+        resultInfo.style.display = "block";
+        resultInfo.textContent = "Exported " + table.rows.length + " rows.";
+    });
+</script>
+</body>
+</html>
