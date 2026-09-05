@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAppUrl } from "@/lib/billing/app-url";
+import { absoluteAppUrl } from "@/lib/billing/app-url";
 import { PRO_MONTHLY_USD } from "@/lib/billing/constants";
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,16 +24,35 @@ export async function POST() {
     return NextResponse.json({ error: "Debes iniciar sesión" }, { status: 401 });
   }
 
-  const appUrl = getAppUrl();
+  let success_url: string;
+  let cancel_url: string;
+  let ipn_callback_url: string;
+  try {
+    success_url = absoluteAppUrl("/payment/success");
+    cancel_url = absoluteAppUrl("/");
+    ipn_callback_url = absoluteAppUrl("/api/webhooks/nowpayments");
+    for (const uri of [success_url, cancel_url, ipn_callback_url]) {
+      const parsed = new URL(uri);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        throw new Error(uri);
+      }
+    }
+  } catch {
+    return NextResponse.json(
+      { error: "NEXT_PUBLIC_APP_URL debe ser una URL absoluta (https://formatexcel.online)" },
+      { status: 500 },
+    );
+  }
+
   const payCurrency = (process.env.NOWPAYMENTS_PAY_CURRENCY ?? "").trim();
   const body: Record<string, string | number> = {
     price_amount: Number(PRO_MONTHLY_USD.toFixed(2)),
     price_currency: "USD",
     order_id: user.id,
     order_description: "formatexcel.online PRO",
-    ipn_callback_url: `${appUrl}/api/webhooks/nowpayments`,
-    success_url: `${appUrl}/payment/success?session_id={invoice_id}`,
-    cancel_url: `${appUrl}/`,
+    ipn_callback_url,
+    success_url,
+    cancel_url,
   };
   if (payCurrency) body.pay_currency = payCurrency;
 
