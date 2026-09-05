@@ -47,7 +47,7 @@ export function FileUploader({ onLoaded, disabled }: FileUploaderProps) {
       animate={dragging ? { scale: 1.01 } : { scale: 1 }}
       transition={{ type: "spring", stiffness: 320, damping: 24 }}
       className={cn(
-        "relative flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white px-6 py-10 text-center transition-colors",
+        "relative flex min-h-56 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-card px-6 py-10 text-center transition-colors",
         dragging ? "border-primary bg-accent" : "border-border hover:border-primary/50",
         disabled && "pointer-events-none opacity-60",
       )}

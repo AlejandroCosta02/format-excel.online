@@ -125,7 +125,7 @@ export function ExcelPreviewTable({
       <div
         ref={scrollerRef}
         onScroll={updateOverflow}
-        className="max-h-[min(560px,65vh)] w-full max-w-full min-w-0 overflow-auto rounded-xl border bg-white [scrollbar-color:var(--color-primary)_#e2e8f0] [scrollbar-width:thin]"
+        className="max-h-[min(560px,65vh)] w-full max-w-full min-w-0 overflow-auto rounded-xl border bg-card [scrollbar-color:var(--color-primary)_#e2e8f0] [scrollbar-width:thin]"
       >
         <table className="w-max min-w-full border-separate border-spacing-0 text-left">
           <thead>
@@ -157,14 +157,14 @@ export function ExcelPreviewTable({
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="group odd:bg-white even:bg-slate-50/80">
+              <tr key={row.id} className="group odd:bg-card even:bg-muted/40">
                 {row.getVisibleCells().map((cell, index) => (
                   <td
                     key={cell.id}
                     className={cn(
                       "min-w-[180px] max-w-[280px] border-b border-r border-border px-3 py-2 font-mono text-xs break-words text-slate-800",
                       index === 0 &&
-                        "sticky left-0 z-10 bg-white group-even:bg-slate-50/80",
+                        "sticky left-0 z-10 bg-card group-even:bg-muted/40",
                     )}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}

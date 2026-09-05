@@ -62,7 +62,7 @@ export function PaymentSuccessClient() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-lg rounded-2xl border bg-white p-8 text-center shadow-sm"
+        className="w-full max-w-lg rounded-2xl border bg-card p-8 text-center shadow-sm"
       >
         <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-excel/10 text-excel">
           {activated ? (

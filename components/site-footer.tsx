@@ -1,36 +1,85 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/components/auth-provider";
+import { useI18n } from "@/lib/i18n/provider";
 import { useMailMergeQuota } from "@/hooks/use-mail-merge-quota";
 
 export function SiteFooter() {
   const { user, isPro } = useAuth();
+  const { t } = useI18n();
   const quota = useMailMergeQuota(user?.id ?? null, isPro);
 
   return (
-    <footer className="mt-auto border-t bg-white">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 ExcelFlow · Procesamiento en el navegador.</p>
-        <div className="flex flex-wrap gap-x-4 gap-y-1">
-          <a href="#legal" id="legal" className="hover:text-foreground">
-            Aviso legal
-          </a>
-          <a href="#privacidad" id="privacidad" className="hover:text-foreground">
-            Privacidad
-          </a>
-          <span>
-            Mail Merge hoy:{" "}
-            {isPro ? (
-              <strong className="text-excel">ilimitado (Pro)</strong>
-            ) : (
-              <>
-                <strong className="text-foreground">
-                  {quota.remaining}/{quota.limit}
-                </strong>{" "}
-                envíos restantes
-              </>
-            )}
-          </span>
+    <footer className="mt-auto border-t bg-background">
+      <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <p className="text-sm font-semibold">{t.brand}</p>
+          <p className="mt-2 text-sm text-muted-foreground">{t.footer.blurb}</p>
+          <p className="mt-4 text-xs text-muted-foreground">{t.footer.copyright}</p>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold">{t.footer.tools}</h2>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>
+              <Link className="hover:text-foreground" href="/?tool=formatter#workspace">
+                {t.nav.formatter}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-foreground" href="/?tool=manifest#workspace">
+                {t.nav.manifest}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-foreground" href="/?tool=mail-merge#workspace">
+                {t.nav.mailMerge}
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold">{t.footer.support}</h2>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>
+              <a className="hover:text-foreground" href="mailto:admin@formatexcel.online">
+                admin@formatexcel.online
+              </a>
+            </li>
+            <li>
+              <Link className="hover:text-foreground" href="/#faq">
+                {t.footer.faq}
+              </Link>
+            </li>
+            <li>
+              {t.footer.mailQuota}:{" "}
+              {isPro ? (
+                <strong className="text-excel">{t.footer.unlimited}</strong>
+              ) : (
+                <>
+                  <strong className="text-foreground">
+                    {quota.remaining}/{quota.limit}
+                  </strong>{" "}
+                  {t.footer.remaining}
+                </>
+              )}
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold">{t.footer.legal}</h2>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>
+              <Link className="hover:text-foreground" href="/terms">
+                {t.footer.terms}
+              </Link>
+            </li>
+            <li>
+              <Link className="hover:text-foreground" href="/privacy">
+                {t.footer.privacy}
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </footer>

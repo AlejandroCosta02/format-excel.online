@@ -131,14 +131,14 @@ export function MailMergeTool() {
         </Badge>
       </div>
 
-      <ul className="list-disc space-y-1 rounded-xl border bg-white px-5 py-4 text-sm text-slate-600">
+      <ul className="list-disc space-y-1 rounded-xl border bg-card px-5 py-4 text-sm text-muted-foreground">
         <li>Prepara el Excel (p. ej. Lat2.0) y elimina filas no vendidas.</li>
         <li>Si hace falta, incluye columnas Section y Desk #.</li>
         <li>Las etiquetas del .docx van entre llaves simples.</li>
       </ul>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-white px-4 py-8 text-center hover:border-primary/50">
+        <label className="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-card px-4 py-8 text-center hover:border-primary/50">
           <FileSpreadsheet className="mb-2 size-8 text-primary" />
           <p className="font-medium">1. Fuente de datos</p>
           <p className="text-sm text-muted-foreground">Excel o CSV</p>
@@ -150,7 +150,7 @@ export function MailMergeTool() {
             onChange={(event) => void onExcel(event.target.files?.[0])}
           />
         </label>
-        <label className="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-white px-4 py-8 text-center hover:border-primary/50">
+        <label className="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-card px-4 py-8 text-center hover:border-primary/50">
           <FileText className="mb-2 size-8 text-primary" />
           <p className="font-medium">2. Plantillas Word</p>
           <p className="text-sm text-muted-foreground">Uno o varios .docx</p>
@@ -168,7 +168,7 @@ export function MailMergeTool() {
       </div>
 
       {ready ? (
-        <Card className="bg-white ring-border">
+        <Card className="bg-card ring-border">
           <CardHeader>
             <CardTitle className="text-base">Asignación de plantillas</CardTitle>
             <CardDescription>
@@ -238,7 +238,7 @@ export function MailMergeTool() {
       ) : null}
 
       {result ? (
-        <Card className="bg-white ring-border">
+        <Card className="bg-card ring-border">
           <CardHeader>
             <CardTitle className="text-base">Descargas</CardTitle>
             <CardDescription>

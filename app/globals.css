@@ -90,6 +90,38 @@
   --sidebar-ring: #2563eb;
 }
 
+.dark {
+  --background: #090d16;
+  --foreground: #f1f5f9;
+  --card: #121826;
+  --card-foreground: #f1f5f9;
+  --popover: #121826;
+  --popover-foreground: #f1f5f9;
+  --primary: #3b82f6;
+  --primary-foreground: #f8fafc;
+  --secondary: #1e293b;
+  --secondary-foreground: #e2e8f0;
+  --muted: #1e293b;
+  --muted-foreground: #cbd5e1;
+  --accent: #172554;
+  --accent-foreground: #bfdbfe;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: #1e293b;
+  --input: #1e293b;
+  --ring: #3b82f6;
+  --excel: #22c55e;
+  --excel-foreground: #052e16;
+  --excel-hover: #16a34a;
+  --sidebar: #121826;
+  --sidebar-foreground: #f1f5f9;
+  --sidebar-primary: #3b82f6;
+  --sidebar-primary-foreground: #f8fafc;
+  --sidebar-accent: #1e293b;
+  --sidebar-accent-foreground: #e2e8f0;
+  --sidebar-border: #1e293b;
+  --sidebar-ring: #3b82f6;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -99,5 +131,9 @@
   }
   html {
     @apply font-sans;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
   }
 }

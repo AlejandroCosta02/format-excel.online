@@ -32,7 +32,7 @@ export function ManifestPreviewTable({ headers, rows }: ManifestPreviewTableProp
   });
 
   return (
-    <div className="max-h-[min(480px,55vh)] w-full min-w-0 overflow-auto rounded-xl border bg-white [scrollbar-width:thin]">
+    <div className="max-h-[min(480px,55vh)] w-full min-w-0 overflow-auto rounded-xl border bg-card [scrollbar-width:thin]">
       <table className="w-max min-w-full border-collapse text-sm">
         <thead className="sticky top-0 z-10 bg-slate-50">
           {table.getHeaderGroups().map((group) => (
@@ -50,7 +50,7 @@ export function ManifestPreviewTable({ headers, rows }: ManifestPreviewTableProp
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="odd:bg-white even:bg-muted/30">
+            <tr key={row.id} className="odd:bg-card even:bg-muted/30">
               {row.getVisibleCells().map((cell) => (
                 <td key={cell.id} className="border-b px-3 py-1.5 whitespace-nowrap text-slate-800">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

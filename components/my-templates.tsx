@@ -81,7 +81,7 @@ export function MyTemplates() {
       ) : null}
       <ul className="flex flex-col gap-3">
         {templates.map((template) => (
-          <li key={template.id} className="rounded-xl border bg-white p-4">
+          <li key={template.id} className="rounded-xl border bg-card p-4">
             {editing === template.id ? (
               <div className="grid gap-2">
                 <Input value={title} onChange={(event) => setTitle(event.target.value)} />

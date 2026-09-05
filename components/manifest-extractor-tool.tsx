@@ -205,7 +205,7 @@ export function ManifestExtractorTool() {
       </div>
 
       <label
-        className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-white px-6 py-8 text-center hover:border-primary/50"
+        className="flex min-h-40 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-card px-6 py-8 text-center hover:border-primary/50"
         onDragOver={(event) => event.preventDefault()}
         onDrop={(event) => {
           event.preventDefault();
@@ -233,7 +233,7 @@ export function ManifestExtractorTool() {
       </label>
 
       {primary ? (
-        <div className="flex flex-col gap-4 rounded-xl border bg-white p-4">
+        <div className="flex flex-col gap-4 rounded-xl border bg-card p-4">
           <p className="text-sm font-medium">Paso 2 · Configuración de extracción</p>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="grid gap-1.5">

@@ -1,7 +1,11 @@
 "use client";
 
-import { Bookmark, FileSpreadsheet, LogOut, Tag } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { FileSpreadsheet, Languages, LogOut, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useAuth } from "@/components/auth-provider";
+import { useI18n } from "@/lib/i18n/provider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,54 +17,95 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-type SiteHeaderProps = {
-  onPrices: () => void;
-};
-
-export function SiteHeader({ onPrices }: SiteHeaderProps) {
+export function SiteHeader() {
   const { user, isPro, openAuth, signOut } = useAuth();
+  const { t, locale, setLocale } = useI18n();
+  const { resolvedTheme, setTheme } = useTheme();
+  const pathname = usePathname();
+  const router = useRouter();
   const name =
-    (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? "Cuenta";
+    (user?.user_metadata?.full_name as string | undefined) ?? user?.email ?? t.brandShort;
   const avatar = user?.user_metadata?.avatar_url as string | undefined;
   const initials = name.slice(0, 2).toUpperCase();
+  const dark = resolvedTheme === "dark";
+
+  function goHome(hash: string, tool?: string) {
+    const qs = tool ? `/?tool=${tool}` : "/";
+    const scroll = () => {
+      if (hash) document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
+    };
+    if (pathname === "/") {
+      if (tool) router.replace(qs, { scroll: false });
+      requestAnimationFrame(scroll);
+      return;
+    }
+    router.push(tool ? `${qs}${hash}` : `/${hash}`);
+  }
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-white/90 backdrop-blur">
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-3 px-4 py-3">
-        <div className="flex items-center gap-2">
+    <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
+      <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+        <Link href="/" className="flex min-w-0 items-center gap-2">
           <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground">
-            Ex
+            Fx
           </span>
-          <span className="hidden text-sm font-semibold tracking-tight sm:inline">
-            ExcelFlow
-          </span>
-        </div>
+          <span className="truncate text-sm font-semibold tracking-tight">{t.brand}</span>
+          <Badge variant={isPro ? "default" : "outline"}>{isPro ? t.nav.pro : t.nav.free}</Badge>
+        </Link>
 
-        <div className="flex min-w-0 justify-center">
-          <TabsList className="h-auto w-full max-w-3xl flex-wrap justify-center sm:w-fit">
-            <TabsTrigger value="formatter" className="px-2.5 py-1.5">
-              <FileSpreadsheet data-icon="inline-start" />
-              Formateador Excel
-            </TabsTrigger>
-            <TabsTrigger value="mail-merge" className="px-2.5 py-1.5">
-              Mail Merge
-            </TabsTrigger>
-            <TabsTrigger value="manifest" className="px-2.5 py-1.5">
-              Extractor Manifest
-            </TabsTrigger>
-            <TabsTrigger value="templates" className="px-2.5 py-1.5">
-              <Bookmark data-icon="inline-start" />
-              Mis Plantillas
-            </TabsTrigger>
-          </TabsList>
-        </div>
+        <nav className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="ghost" size="sm">
+                <FileSpreadsheet data-icon="inline-start" />
+                {t.nav.tools}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center">
+              <DropdownMenuItem onClick={() => goHome("#workspace", "formatter")}>
+                {t.nav.formatter}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => goHome("#workspace", "manifest")}>
+                {t.nav.manifest}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => goHome("#workspace", "mail-merge")}>
+                {t.nav.mailMerge}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => goHome("#workspace", "templates")}>
+                {t.nav.templates}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button type="button" variant="ghost" size="sm" onClick={() => goHome("#pricing")}>
+            {t.nav.pricing}
+          </Button>
+          <Button type="button" variant="ghost" size="sm" onClick={() => goHome("#faq")}>
+            {t.nav.faq}
+          </Button>
+        </nav>
 
-        <div className="flex items-center justify-end gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={onPrices}>
-            <Tag data-icon="inline-start" />
-            Precios
+        <div className="flex items-center justify-end gap-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button type="button" variant="ghost" size="sm" aria-label={t.lang[locale]}>
+                <Languages />
+                {locale.toUpperCase()}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => setLocale("en")}>EN · {t.lang.en}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setLocale("es")}>ES · {t.lang.es}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={dark ? t.theme.light : t.theme.dark}
+            onClick={() => setTheme(dark ? "light" : "dark")}
+          >
+            {dark ? <Sun /> : <Moon />}
           </Button>
           {user ? (
             <DropdownMenu>
@@ -76,20 +121,20 @@ export function SiteHeader({ onPrices }: SiteHeaderProps) {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">{name}</p>
-                    <Badge variant={isPro ? "default" : "outline"}>{isPro ? "PRO" : "Gratis"}</Badge>
+                    <Badge variant={isPro ? "default" : "outline"}>{isPro ? t.nav.pro : t.nav.free}</Badge>
                   </div>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => void signOut()}>
                   <LogOut />
-                  Cerrar sesión
+                  {t.nav.signOut}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <Button type="button" size="sm" onClick={() => openAuth()}>
-              Iniciar sesión con Google
+              {t.nav.login}
             </Button>
           )}
         </div>

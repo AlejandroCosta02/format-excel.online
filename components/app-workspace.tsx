@@ -1,96 +1,85 @@
 "use client";
 
-import { useState } from "react";
-import { AuthProvider, useAuth } from "@/components/auth-provider";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useI18n } from "@/lib/i18n/provider";
 import { ExcelEditor } from "@/components/excel-editor";
 import { MailMergeTool } from "@/components/mail-merge-tool";
 import { ManifestExtractorTool } from "@/components/manifest-extractor-tool";
 import { MyTemplates } from "@/components/my-templates";
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { FaqSection } from "@/components/faq-section";
+import { PricingSection } from "@/components/pricing-section";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { getProPriceLabel } from "@/lib/billing/checkout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const HERO = {
-  formatter: {
-    title: "Formatea Excel en el navegador, sin registro.",
-    description:
-      "Arrastra un .xlsx o .csv, elimina columnas, pinta cabeceras y añade totales. Exportar es gratis. Guardar plantilla o lotes requiere Pro (pago).",
-  },
-  "mail-merge": {
-    title: "Mail Merge semi-automático con cupo diario.",
-    description:
-      "Carga el Excel y las plantillas .docx. Invitados: 5 cartas/día. Cuenta gratis: 10/día. Pro: ilimitado tras el pago.",
-  },
-  manifest: {
-    title: "Extrae filas de cualquier manifiesto.",
-    description:
-      "Elige la columna de búsqueda, los valores a filtrar y las columnas de salida. Un archivo ≤ 2 MB es gratis; varios a la vez es Pro.",
-  },
-  templates: {
-    title: "Mis plantillas Pro.",
-    description:
-      "Lista, renombra o elimina las configuraciones guardadas en tu cuenta de Supabase (solo las tuyas, vía RLS).",
-  },
-} as const;
+const TOOLS = ["formatter", "mail-merge", "manifest", "templates"] as const;
+type ToolTab = (typeof TOOLS)[number];
 
-export function AppWorkspace() {
-  return (
-    <AuthProvider>
-      <WorkspaceShell />
-    </AuthProvider>
-  );
+function isTool(value: string | null): value is ToolTab {
+  return TOOLS.includes(value as ToolTab);
 }
 
-function WorkspaceShell() {
-  const { isPro, openUpgrade } = useAuth();
-  const [tab, setTab] = useState<keyof typeof HERO>("formatter");
-  const [pricesOpen, setPricesOpen] = useState(false);
-  const hero = HERO[tab];
+export function AppWorkspace() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { t } = useI18n();
+  const [tab, setTab] = useState<ToolTab>("formatter");
+
+  useEffect(() => {
+    const tool = searchParams.get("tool");
+    if (isTool(tool)) setTab(tool);
+  }, [searchParams]);
+
+  const hero =
+    tab === "formatter"
+      ? { title: t.hero.formatterTitle, description: t.hero.formatterDesc }
+      : tab === "mail-merge"
+        ? { title: t.hero.mailTitle, description: t.hero.mailDesc }
+        : tab === "templates"
+          ? { title: t.hero.templatesTitle, description: t.hero.templatesDesc }
+          : { title: t.hero.manifestTitle, description: t.hero.manifestDesc };
+
+  const cardTitle =
+    tab === "formatter"
+      ? t.hero.cardFormatter
+      : tab === "mail-merge"
+        ? t.hero.cardMail
+        : tab === "templates"
+          ? t.hero.cardTemplates
+          : t.hero.cardManifest;
 
   return (
-    <>
-      <Tabs
-        value={tab}
-        onValueChange={(value) => setTab(value as keyof typeof HERO)}
-        className="flex min-h-full flex-1 flex-col gap-0"
-      >
-        <SiteHeader onPrices={() => setPricesOpen(true)} />
+    <div className="flex min-h-full flex-1 flex-col">
+      <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col gap-10 px-4 py-8">
+        <section id="workspace" className="scroll-mt-24">
+          <Badge variant="outline">{t.hero.badge}</Badge>
+          <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl">
+            {hero.title}
+          </h1>
+          <p className="mt-2 max-w-2xl text-base text-muted-foreground">{hero.description}</p>
+        </section>
 
-        <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col gap-6 px-4 py-8">
-          <section>
-            <Badge variant="outline">Guest-first · 3 herramientas</Badge>
-            <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl">
-              {hero.title}
-            </h1>
-            <p className="mt-2 max-w-2xl text-base text-muted-foreground">{hero.description}</p>
-          </section>
-
-          <Card className="min-w-0 overflow-hidden bg-white ring-border">
+        <Tabs
+          value={tab}
+          onValueChange={(value) => {
+            if (!isTool(value)) return;
+            setTab(value);
+            router.replace(`/?tool=${value}#workspace`, { scroll: false });
+          }}
+          className="flex min-w-0 flex-col gap-3"
+        >
+          <TabsList variant="line" className="h-auto w-full max-w-full flex-wrap justify-start">
+            <TabsTrigger value="formatter">{t.nav.formatter}</TabsTrigger>
+            <TabsTrigger value="manifest">{t.nav.manifest}</TabsTrigger>
+            <TabsTrigger value="mail-merge">{t.nav.mailMerge}</TabsTrigger>
+            <TabsTrigger value="templates">{t.nav.templates}</TabsTrigger>
+          </TabsList>
+          <Card className="min-w-0 overflow-hidden bg-card ring-border">
             <CardHeader className="border-b">
-              <CardTitle>
-                {tab === "formatter"
-                  ? "Editor"
-                  : tab === "mail-merge"
-                    ? "Generador de cartas"
-                    : tab === "templates"
-                      ? "Mis plantillas"
-                      : "Extractor configurable"}
-              </CardTitle>
+              <CardTitle>{cardTitle}</CardTitle>
               <CardDescription>
-                {tab === "templates"
-                  ? "Las plantillas se guardan en Supabase asociadas a tu usuario."
-                  : "El archivo se procesa en tu dispositivo. Las plantillas Pro sí se persisten en tu cuenta."}
+                {tab === "templates" ? t.hero.cardDescTemplates : t.hero.cardDesc}
               </CardDescription>
             </CardHeader>
             <CardContent className="min-w-0 overflow-hidden pt-4">
@@ -108,44 +97,11 @@ function WorkspaceShell() {
               </TabsContent>
             </CardContent>
           </Card>
-        </main>
+        </Tabs>
 
-        <SiteFooter />
-      </Tabs>
-
-      <Dialog open={pricesOpen} onOpenChange={setPricesOpen}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Planes</DialogTitle>
-            <DialogDescription>Sin registro para las funciones gancho.</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-3 text-sm sm:grid-cols-2">
-            <div className="rounded-xl border p-4">
-              <p className="font-medium">Gratis</p>
-              <ul className="mt-2 list-disc space-y-1 pl-4 text-muted-foreground">
-                <li>1 Excel formateado y exportado</li>
-                <li>Mail Merge: 5/día invitado · 10/día con cuenta</li>
-                <li>1 manifiesto ≤ 2 MB</li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-primary/30 bg-accent p-4">
-              <p className="font-medium text-primary">Pro</p>
-              <ul className="mt-2 list-disc space-y-1 pl-4 text-muted-foreground">
-                <li>Plantillas JSON y lotes</li>
-                <li>Mail Merge ilimitado</li>
-                <li>Extractos masivos consolidados</li>
-              </ul>
-            </div>
-          </div>
-          {isPro ? (
-            <p className="text-sm text-excel">Tu cuenta ya es Pro.</p>
-          ) : (
-            <Button type="button" className="w-full" onClick={() => { setPricesOpen(false); openUpgrade(); }}>
-              Obtener Plan Pro ({getProPriceLabel()})
-            </Button>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+        <PricingSection />
+        <FaqSection />
+      </main>
+    </div>
   );
 }

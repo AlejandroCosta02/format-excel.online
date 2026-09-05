@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { getSupabasePublicEnv } from "@/lib/supabase/env";
+import { useI18n } from "@/lib/i18n/provider";
 
 type AuthModalProps = {
   open: boolean;
@@ -26,6 +27,7 @@ export function AuthModal({
   title = "Continúa con Google",
   description = "Inicia sesión para usar las funciones Pro de ExcelFlow.",
 }: AuthModalProps) {
+  const { t } = useI18n();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const configured = getSupabasePublicEnv().isConfigured;
@@ -73,7 +75,7 @@ export function AuthModal({
             onClick={signInWithGoogle}
             disabled={pending}
           >
-            {pending ? "Redirigiendo…" : "Continuar con Google"}
+            {pending ? t.auth.pending : t.auth.google}
           </Button>
           {error ? (
             <p className="text-sm text-destructive" role="alert">
@@ -82,7 +84,7 @@ export function AuthModal({
           ) : (
             <p className="flex items-start gap-2 text-xs text-muted-foreground">
               <FileSpreadsheet className="mt-0.5 size-3.5 shrink-0" />
-              Tras el login volverás a la herramienta. Seguirás en el plan gratis hasta completar el pago.
+              {t.auth.hint}
             </p>
           )}
         </div>

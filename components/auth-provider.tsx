@@ -37,13 +37,13 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 const DEFAULT_PROMPT: AuthPrompt = {
-  title: "Continúa con Google",
-  description: "Crea una cuenta gratis. El plan Pro se activa solo después del pago.",
+  title: "Continue with Google",
+  description: "Create a free account. Pro activates only after payment.",
 };
 
 const DEFAULT_PRO_PROMPT: AuthPrompt = {
-  title: "Esta función es Pro",
-  description: "Inicia sesión y suscríbete para guardar plantillas, lotes y envíos ilimitados.",
+  title: "This is a Pro feature",
+  description: "Sign in and subscribe to save templates, run batches, and send without limits.",
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -220,7 +220,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const ctx = useContext(AuthContext);
   if (!ctx) {
-    throw new Error("useAuth debe usarse dentro de AuthProvider");
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return ctx;
 }

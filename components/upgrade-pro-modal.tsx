@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { getProPriceLabel } from "@/lib/billing/checkout";
+import { useI18n } from "@/lib/i18n/provider";
 
 type UpgradeProModalProps = {
   open: boolean;
@@ -22,6 +23,7 @@ type UpgradeProModalProps = {
 };
 
 export function UpgradeProModal({ open, onOpenChange, user, onLogin }: UpgradeProModalProps) {
+  const { t } = useI18n();
   const price = getProPriceLabel();
   const [pending, setPending] = useState(false);
 
@@ -50,28 +52,27 @@ export function UpgradeProModal({ open, onOpenChange, user, onLogin }: UpgradePr
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="size-5 text-primary" />
-            Pasa a FormatExcel Pro
+            {t.upgrade.title}
           </DialogTitle>
           <DialogDescription>
-            Iniciar sesión no activa Pro. El pago con cripto (NOWPayments) desbloquea plantillas,
-            lotes y envíos ilimitados.
+            {t.upgrade.desc}
           </DialogDescription>
         </DialogHeader>
         <ul className="list-disc space-y-1.5 pl-5 text-sm text-muted-foreground">
-          <li>Plantillas ilimitadas y aplicación en 1 clic</li>
-          <li>Mail Merge sin límite diario</li>
-          <li>Procesamiento masivo por lotes (varios archivos y &gt; 2 MB)</li>
+          <li>{t.upgrade.b1}</li>
+          <li>{t.upgrade.b2}</li>
+          <li>{t.upgrade.b3}</li>
         </ul>
         <Button type="button" className="w-full" size="lg" onClick={() => void subscribe()} disabled={pending}>
           {pending ? (
             <>
               <Loader2 className="size-4 animate-spin" data-icon="inline-start" />
-              Creando factura…
+              {t.upgrade.creating}
             </>
           ) : user ? (
-            `Obtener Plan Pro · ${price}`
+            `${t.pricing.cta} · ${price}`
           ) : (
-            "Inicia sesión para suscribirte"
+            t.upgrade.loginCta
           )}
         </Button>
       </DialogContent>
