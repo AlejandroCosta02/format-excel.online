@@ -20,13 +20,13 @@ export const messages = {
     theme: { light: "Light mode", dark: "Dark mode" },
     lang: { en: "English", es: "Spanish" },
     hero: {
-      badge: "Guest-first · 3 tools",
+      badge: "Tools",
       formatterTitle: "Format Excel in your browser, no sign-up required.",
       formatterDesc:
         "Drop an .xlsx or .csv, hide columns, style headers, and add totals. Export is free. Saving templates and batch runs require Pro.",
       mailTitle: "Semi-automatic mail merge with a daily quota.",
       mailDesc:
-        "Upload Excel plus .docx templates. Guests: 5 letters/day. Free accounts: 10/day. Pro: unlimited after payment.",
+        "Upload Excel plus .docx templates. Free plan: 5 letters/day. Pro: unlimited after payment.",
       manifestTitle: "Extract rows from any manifest file.",
       manifestDesc:
         "Pick the search column, filter values, and output fields. One file ≤ 2 MB is free; multi-file batches are Pro.",
@@ -48,13 +48,13 @@ export const messages = {
       pro: "Pro",
       freeItems: [
         "Format and export one spreadsheet at a time",
-        "Mail merge: 5/day as guest · 10/day with a free account",
+        "Mail merge: 5 letters per day",
         "One manifest file ≤ 2 MB",
       ],
       proItems: [
         "Unlimited saved templates and 1-click apply",
         "Unlimited mail merge",
-        "Batch processing and files over 2 MB",
+        "Batch processing on Manifest Extractor (multiple files) and files over 2 MB",
       ],
       alreadyPro: "Your account is already Pro.",
       cta: "Get Pro",
@@ -97,7 +97,7 @@ export const messages = {
       desc: "Signing in does not activate Pro. Crypto checkout unlocks templates, batches, and unlimited sends.",
       b1: "Unlimited templates and 1-click apply",
       b2: "Mail merge with no daily cap",
-      b3: "Batch processing (multiple files and over 2 MB)",
+      b3: "Batch extraction of multiple manifest files (and files over 2 MB)",
       creating: "Creating invoice…",
       loginCta: "Sign in to subscribe",
     },
@@ -134,7 +134,7 @@ export const messages = {
         "Arrastra un .xlsx o .csv, oculta columnas, pinta cabeceras y añade totales. Exportar es gratis. Guardar plantillas y lotes requiere Pro.",
       mailTitle: "Mail merge semi-automático con cupo diario.",
       mailDesc:
-        "Carga el Excel y plantillas .docx. Invitados: 5 cartas/día. Cuenta gratis: 10/día. Pro: ilimitado tras el pago.",
+        "Carga el Excel y plantillas .docx. Plan gratis: 5 cartas/día. Pro: ilimitado tras el pago.",
       manifestTitle: "Extrae filas de cualquier manifiesto.",
       manifestDesc:
         "Elige la columna de búsqueda, los valores y las columnas de salida. Un archivo ≤ 2 MB es gratis; varios a la vez es Pro.",
@@ -157,13 +157,13 @@ export const messages = {
       pro: "Pro",
       freeItems: [
         "Formatea y exporta un Excel a la vez",
-        "Mail merge: 5/día invitado · 10/día con cuenta gratis",
+        "Mail merge: 5 cartas por día",
         "Un manifiesto ≤ 2 MB",
       ],
       proItems: [
         "Plantillas ilimitadas y aplicación en 1 clic",
         "Mail merge ilimitado",
-        "Lotes y archivos de más de 2 MB",
+        "Lotes en Manifest Extractor (varios archivos) y archivos de más de 2 MB",
       ],
       alreadyPro: "Tu cuenta ya es Pro.",
       cta: "Obtener Pro",
@@ -206,7 +206,7 @@ export const messages = {
       desc: "Iniciar sesión no activa Pro. El pago con cripto desbloquea plantillas, lotes y envíos ilimitados.",
       b1: "Plantillas ilimitadas y aplicación en 1 clic",
       b2: "Mail merge sin límite diario",
-      b3: "Procesamiento masivo (varios archivos y > 2 MB)",
+      b3: "Extracción en lote de varios manifiestos (y archivos > 2 MB)",
       creating: "Creando factura…",
       loginCta: "Inicia sesión para suscribirte",
     },

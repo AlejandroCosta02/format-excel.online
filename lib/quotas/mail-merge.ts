@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const MAIL_MERGE_GUEST_LIMIT = 5;
-export const MAIL_MERGE_FREE_LIMIT = 10;
+export const MAIL_MERGE_FREE_LIMIT = 5;
 export const MAIL_MERGE_QUOTA_KEY_PREFIX = "excelflow:mail-merge-quota:v2";
 
 const quotaSchema = z.object({
@@ -57,7 +57,7 @@ function cacheSnapshot(next: MailMergeQuota): MailMergeQuota {
 
 export function mailMergeLimitFor(input: { userId: string | null; isPro: boolean }): number {
   if (input.isPro) return Number.MAX_SAFE_INTEGER;
-  return input.userId ? MAIL_MERGE_FREE_LIMIT : MAIL_MERGE_GUEST_LIMIT;
+  return MAIL_MERGE_FREE_LIMIT;
 }
 
 export function readMailMergeQuota(input: { userId: string | null; isPro: boolean }): MailMergeQuota {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Layers3, Lock, Plus, Save } from "lucide-react";
+import { Download, Lock, Plus, Save } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
 import { SaveTemplateModal } from "@/components/save-template-modal";
 import { Button } from "@/components/ui/button";
@@ -90,23 +90,6 @@ export function EditorToolbar({
           <Button type="button" variant="outline" onClick={handleSaveTemplate}>
             {user && isPro ? <Save data-icon="inline-start" /> : <Lock data-icon="inline-start" />}
             Guardar Plantilla
-            <Badge variant="outline" className="ml-1">
-              Pro
-            </Badge>
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={() =>
-              requirePro({
-                title: "Procesamiento por lotes",
-                description:
-                  "Aplicar la misma plantilla a varios Excel a la vez es Pro. Inicia sesión y suscríbete para continuar.",
-              })
-            }
-          >
-            <Layers3 data-icon="inline-start" />
-            Procesar en lote
             <Badge variant="outline" className="ml-1">
               Pro
             </Badge>

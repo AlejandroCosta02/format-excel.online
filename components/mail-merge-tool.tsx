@@ -120,7 +120,6 @@ export function MailMergeTool() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          Motor portado desde <code className="font-mono text-xs">scripts/mail-merge/</code>.
           Placeholders: <code className="font-mono text-xs">{"{GUEST_NAME}"}</code>,{" "}
           <code className="font-mono text-xs">{"{FOLIO}"}</code>.
         </p>
@@ -132,9 +131,9 @@ export function MailMergeTool() {
       </div>
 
       <ul className="list-disc space-y-1 rounded-xl border bg-card px-5 py-4 text-sm text-muted-foreground">
-        <li>Prepara el Excel (p. ej. Lat2.0) y elimina filas no vendidas.</li>
-        <li>Si hace falta, incluye columnas Section y Desk #.</li>
-        <li>Las etiquetas del .docx van entre llaves simples.</li>
+        <li>Prepara el Excel y elimina filas no necesarias.</li>
+        <li>Incluye columnas que necesites para el merge.</li>
+        <li>Las etiquetas del .docx van entre llaves simples: {`{GUEST_NAME}`} y {`{CUENTA_ID}`} .</li>
       </ul>
 
       <div className="grid gap-4 md:grid-cols-2">
