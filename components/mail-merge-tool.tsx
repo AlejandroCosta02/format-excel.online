@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { useMailMergeQuota } from "@/hooks/use-mail-merge-quota";
 import { consumeMailMergeQuota } from "@/lib/quotas/mail-merge";
+import { fetchSampleFile, SAMPLE_FILES } from "@/lib/samples/files";
+import { useI18n } from "@/lib/i18n/provider";
 import {
   countMappedRows,
   generateMailMergePackages,
@@ -29,6 +31,7 @@ const SKIP_VALUE = "__skip__";
 
 export function MailMergeTool() {
   const { user, isPro, openUpgrade } = useAuth();
+  const { t } = useI18n();
   const quota = useMailMergeQuota(user?.id ?? null, isPro);
   const [rows, setRows] = useState<MailMergeRow[]>([]);
   const [excelName, setExcelName] = useState<string | null>(null);
@@ -44,6 +47,33 @@ export function MailMergeTool() {
 
   const tours = useMemo(() => uniqueTourNames(rows), [rows]);
   const templateNames = Object.keys(templates);
+
+  async function loadSample() {
+    setError(null);
+    setResult(null);
+    try {
+      const excelFile = await fetchSampleFile(
+        SAMPLE_FILES.mailExcel.url,
+        SAMPLE_FILES.mailExcel.name,
+        SAMPLE_FILES.mailExcel.mime,
+      );
+      const docxFile = await fetchSampleFile(
+        SAMPLE_FILES.mailDocx.url,
+        SAMPLE_FILES.mailDocx.name,
+        SAMPLE_FILES.mailDocx.mime,
+      );
+      const parsed = parseMailMergeWorkbook(await excelFile.arrayBuffer());
+      const docxBuffer = await docxFile.arrayBuffer();
+      const templateName = docxFile.name;
+      setRows(parsed);
+      setExcelName(excelFile.name);
+      setTemplates({ [templateName]: docxBuffer });
+      const tours = uniqueTourNames(parsed);
+      setMapping(Object.fromEntries(tours.map((tour) => [tour, templateName])));
+    } catch {
+      setError("No se pudo cargar el ejemplo");
+    }
+  }
 
   async function onExcel(file: File | undefined) {
     if (!file) return;
@@ -135,6 +165,9 @@ export function MailMergeTool() {
         <li>Incluye columnas que necesites para el merge.</li>
         <li>Las etiquetas del .docx van entre llaves simples: {`{GUEST_NAME}`} y {`{CUENTA_ID}`} .</li>
       </ul>
+      <Button type="button" variant="outline" size="sm" className="w-fit" onClick={() => void loadSample()}>
+        {t.samples.mailMerge}
+      </Button>
 
       <div className="grid gap-4 md:grid-cols-2">
         <label className="flex cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed bg-card px-4 py-8 text-center hover:border-primary/50">

@@ -108,6 +108,11 @@ export const messages = {
       termsUpdated: "Last updated: September 2026",
       back: "Back to tools",
     },
+    samples: {
+      try: "Try a sample file",
+      loading: "Loading sample…",
+      mailMerge: "Load sample Excel + letter",
+    },
   },
   es: {
     brand: "FormatExcel.online",
@@ -128,7 +133,7 @@ export const messages = {
     theme: { light: "Modo claro", dark: "Modo oscuro" },
     lang: { en: "Inglés", es: "Español" },
     hero: {
-      badge: "Guest-first · 3 herramientas",
+      badge: "Tools",
       formatterTitle: "Formatea Excel en el navegador, sin registro.",
       formatterDesc:
         "Arrastra un .xlsx o .csv, oculta columnas, pinta cabeceras y añade totales. Exportar es gratis. Guardar plantillas y lotes requiere Pro.",
@@ -216,6 +221,11 @@ export const messages = {
       termsTitle: "Términos de servicio",
       termsUpdated: "Última actualización: septiembre de 2026",
       back: "Volver a las herramientas",
+    },
+    samples: {
+      try: "Probar con un archivo de ejemplo",
+      loading: "Cargando ejemplo…",
+      mailMerge: "Cargar Excel y carta de ejemplo",
     },
   },
 } as const;

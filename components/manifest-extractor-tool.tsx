@@ -31,6 +31,8 @@ import {
   type ManifestMatrix,
   type ManifestSchema,
 } from "@/lib/scripts/manifest-extractor";
+import { fetchSampleFile, SAMPLE_FILES } from "@/lib/samples/files";
+import { useI18n } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 type LoadedSheet = {
@@ -41,6 +43,7 @@ type LoadedSheet = {
 
 export function ManifestExtractorTool() {
   const { isPro, requirePro } = useAuth();
+  const { t } = useI18n();
   const [sheets, setSheets] = useState<LoadedSheet[]>([]);
   const [targetColumn, setTargetColumn] = useState("");
   const [searchRaw, setSearchRaw] = useState("");
@@ -215,6 +218,23 @@ export function ManifestExtractorTool() {
         <FileSpreadsheet className="mb-2 size-8 text-primary" />
         <p className="font-medium">Paso 1 · Arrastra el archivo o haz clic</p>
         <p className="text-sm text-muted-foreground">.xlsx, .xls o .csv (PDF no está soportado)</p>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="mt-3"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const sample = SAMPLE_FILES.manifest;
+            void fetchSampleFile(sample.url, sample.name, sample.mime).then((file) => {
+              void ingestFiles([file]);
+              setSearchRaw("T100");
+            });
+          }}
+        >
+          {t.samples.try}
+        </Button>
         {sheets.length > 0 ? (
           <p className="mt-2 text-sm text-excel">
             {sheets.map((sheet) => sheet.fileName).join(", ")}

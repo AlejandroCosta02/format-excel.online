@@ -4,8 +4,11 @@ import { useCallback, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FileSpreadsheet, Upload } from "lucide-react";
 import { parseSpreadsheet, validateSpreadsheetFile } from "@/lib/excel/parse";
+import { fetchSampleFile, SAMPLE_FILES } from "@/lib/samples/files";
+import { useI18n } from "@/lib/i18n/provider";
 import type { ParsedWorkbook } from "@/types/excel";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type FileUploaderProps = {
   onLoaded: (workbook: ParsedWorkbook) => void;
@@ -13,6 +16,7 @@ type FileUploaderProps = {
 };
 
 export function FileUploader({ onLoaded, disabled }: FileUploaderProps) {
+  const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -100,6 +104,20 @@ export function FileUploader({ onLoaded, disabled }: FileUploaderProps) {
           {error}
         </p>
       ) : null}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        className="mt-4"
+        disabled={loading || disabled}
+        onClick={(event) => {
+          event.stopPropagation();
+          const sample = SAMPLE_FILES.formatter;
+          void fetchSampleFile(sample.url, sample.name, sample.mime).then((file) => handleFile(file));
+        }}
+      >
+        {loading ? t.samples.loading : t.samples.try}
+      </Button>
     </motion.div>
   );
 }
