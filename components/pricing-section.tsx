@@ -37,7 +37,7 @@ export function PricingSection() {
               className="mt-4 w-full"
               onClick={() => (user ? openUpgrade() : openAuth())}
             >
-              {t.pricing.cta} ({getProPriceLabel()})
+              {t.pricing.cta} ({getProPriceLabel()} {t.pricing.once})
             </Button>
           )}
         </div>

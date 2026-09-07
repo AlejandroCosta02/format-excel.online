@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { absoluteAppUrl } from "@/lib/billing/app-url";
-import { PRO_MONTHLY_USD } from "@/lib/billing/constants";
+import { getInvoicePriceUsd } from "@/lib/billing/constants";
 import { createClient } from "@/lib/supabase/server";
 
 type NowPaymentsInvoiceResponse = {
@@ -46,10 +46,10 @@ export async function POST() {
 
   const payCurrency = (process.env.NOWPAYMENTS_PAY_CURRENCY ?? "").trim();
   const body: Record<string, string | number> = {
-    price_amount: Number(PRO_MONTHLY_USD.toFixed(2)),
+    price_amount: Number(getInvoicePriceUsd().toFixed(2)),
     price_currency: "USD",
     order_id: user.id,
-    order_description: "formatexcel.online PRO",
+    order_description: "formatExcel. PRO",
     ipn_callback_url,
     success_url,
     cancel_url,

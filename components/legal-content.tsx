@@ -82,7 +82,7 @@ const TERMS = {
     },
     {
       title: "Free vs Pro",
-      body: "The free tier lets you format and export spreadsheets, run a limited daily mail merge, and extract one manifest file up to 2 MB. Signing in with Google does not by itself grant Pro. Pro features (saved templates, batch processing, unlimited mail merge, larger files) activate only after a successful NOWPayments checkout and webhook confirmation.",
+      body: "The free tier lets you format and export spreadsheets, run a limited daily mail merge, and extract one manifest file up to 2 MB. Signing in with Google does not by itself grant Pro. Pro is a one-time NOWPayments crypto checkout (not a monthly subscription). Features activate after webhook confirmation.",
     },
     {
       title: "Acceptable use",
@@ -108,7 +108,7 @@ const TERMS = {
     },
     {
       title: "Gratis vs Pro",
-      body: "El plan gratis permite formatear y exportar, un mail merge con cupo diario y extraer un manifiesto de hasta 2 MB. Iniciar sesión con Google no otorga Pro. Las funciones Pro se activan solo tras un pago confirmado en NOWPayments.",
+      body: "El plan gratis permite formatear y exportar, un mail merge con cupo diario y extraer un manifiesto de hasta 2 MB. Iniciar sesión con Google no otorga Pro. Pro es un pago único con cripto (NOWPayments), no una suscripción mensual. Las funciones se activan tras confirmar el pago.",
     },
     {
       title: "Uso aceptable",

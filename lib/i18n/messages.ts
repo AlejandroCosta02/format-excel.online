@@ -43,7 +43,7 @@ export const messages = {
     },
     pricing: {
       title: "Plans & pricing",
-      subtitle: "Start free. Upgrade when you need templates, batches, and unlimited mail merge.",
+      subtitle: "Start free. Unlock Pro with a one-time crypto payment.",
       free: "Free",
       pro: "Pro",
       freeItems: [
@@ -58,6 +58,7 @@ export const messages = {
       ],
       alreadyPro: "Your account is already Pro.",
       cta: "Get Pro",
+      once: "one-time",
       guestHook: "No account needed for the core tools.",
     },
     faq: {
@@ -68,8 +69,8 @@ export const messages = {
       a2: "Yes. Spreadsheet processing runs in your browser; we do not persistently store your raw workbooks on our servers. Authentication uses Google OAuth. Only Pro template settings (not the full Excel file) are saved to your account when you choose to save a template.",
       q3: "What payment methods do you accept for Pro?",
       a3: "Pro is paid with cryptocurrency (including USDT/USDC) through NOWPayments. After the payment is confirmed on-chain, your account is upgraded automatically.",
-      q4: "Can I cancel my Pro subscription at any time?",
-      a4: "Pro is currently billed as a one-time or checkout-based crypto payment rather than an auto-renewing card subscription. If you need access removed or have a billing question, email admin@formatexcel.online.",
+      q4: "Is Pro a monthly subscription?",
+      a4: "No. Pro is a one-time crypto payment (not an auto-renewing monthly plan). After NOWPayments confirms the payment, Pro stays on your account. If you need access removed or have a billing question, email admin@formatexcel.online.",
       q5: "How does the custom template saving feature work?",
       a5: "After you format a file (removed columns, header colors, formulas), Pro users can save that recipe. Next time you upload a sheet with matching headers, you can apply the template in one click. Templates belong only to your user.",
     },
@@ -99,7 +100,7 @@ export const messages = {
       b2: "Mail merge with no daily cap",
       b3: "Batch extraction of multiple manifest files (and files over 2 MB)",
       creating: "Creating invoice…",
-      loginCta: "Sign in to subscribe",
+      loginCta: "Sign in to pay",
     },
     legal: {
       privacyTitle: "Privacy Policy",
@@ -157,7 +158,7 @@ export const messages = {
     pricing: {
       title: "Planes y precios",
       subtitle:
-        "Empieza gratis. Pasa a Pro cuando necesites plantillas, lotes y mail merge ilimitado.",
+        "Empieza gratis. Pasa a Pro con un pago único en criptomonedas.",
       free: "Gratis",
       pro: "Pro",
       freeItems: [
@@ -172,6 +173,7 @@ export const messages = {
       ],
       alreadyPro: "Tu cuenta ya es Pro.",
       cta: "Obtener Pro",
+      once: "pago único",
       guestHook: "Sin registro para las funciones básicas.",
     },
     faq: {
@@ -182,8 +184,8 @@ export const messages = {
       a2: "Sí. El procesamiento de hojas corre en tu navegador; no almacenamos de forma persistente tus libros sensibles en nuestros servidores. La autenticación usa Google OAuth. Solo si guardas una plantilla Pro se almacenan ajustes (no el Excel completo) en tu cuenta.",
       q3: "¿Qué métodos de pago aceptan para Pro?",
       a3: "Pro se paga con criptomonedas (incluidos USDT/USDC) a través de NOWPayments. Cuando el pago se confirma en la blockchain, tu cuenta se actualiza automáticamente.",
-      q4: "¿Puedo cancelar mi suscripción en cualquier momento?",
-      a4: "Pro se cobra como pago cripto en checkout, no como una suscripción automática con tarjeta. Si necesitas quitar el acceso o tienes una duda de facturación, escribe a admin@formatexcel.online.",
+      q4: "¿Pro es una suscripción mensual?",
+      a4: "No. Pro es un pago único con cripto, no un plan mensual que se renueve solo. Cuando NOWPayments confirma el pago, Pro queda activo en tu cuenta. Si necesitas quitar el acceso o tienes una duda de facturación, escribe a admin@formatexcel.online.",
       q5: "¿Cómo funciona el guardado de plantillas personalizadas?",
       a5: "Después de formatear un archivo (columnas, colores, fórmulas), los usuarios Pro pueden guardar esa receta. La próxima vez que subas una hoja con las mismas cabeceras, puedes aplicar la plantilla en un clic. Las plantillas son solo tuyas.",
     },
@@ -213,7 +215,7 @@ export const messages = {
       b2: "Mail merge sin límite diario",
       b3: "Extracción en lote de varios manifiestos (y archivos > 2 MB)",
       creating: "Creando factura…",
-      loginCta: "Inicia sesión para suscribirte",
+      loginCta: "Inicia sesión para pagar",
     },
     legal: {
       privacyTitle: "Política de privacidad",

@@ -70,7 +70,7 @@ export function UpgradeProModal({ open, onOpenChange, user, onLogin }: UpgradePr
               {t.upgrade.creating}
             </>
           ) : user ? (
-            `${t.pricing.cta} · ${price}`
+            `${t.pricing.cta} · ${price} ${t.pricing.once}`
           ) : (
             t.upgrade.loginCta
           )}
