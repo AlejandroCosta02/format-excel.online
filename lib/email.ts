@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
 const FROM = "FormatExcel <admin@formatexcel.online>";
+const ADMIN = "admin@formatexcel.online";
 const DASHBOARD_URL = "https://formatexcel.online/dashboard";
 
 export async function sendWelcomeProEmail(userEmail: string, userName: string): Promise<void> {
@@ -21,6 +22,61 @@ export async function sendWelcomeProEmail(userEmail: string, userName: string): 
   if (error) {
     throw new Error(error.message);
   }
+}
+
+export type FeedbackEmailPayload = {
+  message: string;
+  path?: string | null;
+  tool?: string | null;
+  locale?: string | null;
+  userId?: string | null;
+};
+
+export async function sendFeedbackEmail(payload: FeedbackEmailPayload): Promise<void> {
+  const apiKey = (process.env.RESEND_API_KEY ?? "").trim();
+  if (!apiKey) {
+    throw new Error("Falta RESEND_API_KEY");
+  }
+
+  const resend = new Resend(apiKey);
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: ADMIN,
+    subject: "Nuevo feedback FormatExcel",
+    html: feedbackHtml(payload),
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+function feedbackHtml(payload: FeedbackEmailPayload): string {
+  const rows = [
+    ["Mensaje", payload.message],
+    ["Ruta", payload.path ?? "—"],
+    ["Herramienta", payload.tool ?? "—"],
+    ["Idioma", payload.locale ?? "—"],
+    ["Usuario", payload.userId ?? "invitado"],
+  ];
+
+  const body = rows
+    .map(
+      ([label, value]) =>
+        `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#334155;"><strong>${escapeHtml(label)}:</strong><br />${escapeHtml(value)}</p>`,
+    )
+    .join("");
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Feedback FormatExcel</title>
+</head>
+<body style="margin:0;padding:24px;background:#F8FAFC;font-family:Geist,Segoe UI,Helvetica,Arial,sans-serif;color:#0f172a;">
+  ${body}
+</body>
+</html>`;
 }
 
 function welcomeHtml(name: string): string {

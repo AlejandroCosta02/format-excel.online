@@ -129,3 +129,18 @@ begin
 exception
   when duplicate_object then null;
 end $$;
+
+-- Guest feedback (widget). Writes go through the Next.js API with service_role.
+create table if not exists public.feedback (
+  id uuid primary key default gen_random_uuid(),
+  message text not null check (char_length(message) between 1 and 200),
+  path text,
+  tool text,
+  locale text,
+  user_id uuid references auth.users on delete set null,
+  created_at timestamptz default now()
+);
+
+create index if not exists feedback_created_at_idx on public.feedback (created_at desc);
+
+alter table public.feedback enable row level security;
