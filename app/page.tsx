@@ -1,10 +1,14 @@
 import { Suspense } from "react";
 import { AppWorkspace } from "@/components/app-workspace";
+import { LandingPage } from "@/components/landing/landing-page";
 
 export default function Home() {
   return (
-    <Suspense fallback={null}>
-      <AppWorkspace />
-    </Suspense>
+    <>
+      <LandingPage />
+      <Suspense fallback={null}>
+        <AppWorkspace />
+      </Suspense>
+    </>
   );
 }

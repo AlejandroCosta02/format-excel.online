@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { OpenCookieSettingsButton } from "@/components/cookie-consent-banner";
 import { useI18n } from "@/lib/i18n/provider";
 
 const PRIVACY = {
@@ -129,6 +130,53 @@ const TERMS = {
   ],
 };
 
+const COOKIES = {
+  en: [
+    {
+      title: "What this policy covers",
+      body: "This page explains cookies and similar storage on FormatExcel.online. Spreadsheet files you open in the formatter, manifest extractor, and mail merge tools are processed in your browser. We do not upload those workbooks to our servers as part of formatting.",
+    },
+    {
+      title: "Strictly necessary cookies and local storage",
+      body: "We use authentication cookies/session storage for Google sign-in, and local storage for language, theme, guest mail-merge daily quota, and your cookie preference. These are required for the site to work as designed.",
+    },
+    {
+      title: "Analytics cookies (optional)",
+      body: "If you accept analytics, we load Google Analytics (gtag) to count visits and events. This does not include your Excel file contents. You can decline analytics in Cookie settings; then gtag is not loaded.",
+    },
+    {
+      title: "Feedback and accounts",
+      body: "Optional feedback messages and Pro template settings are stored in our database when you submit them or save a template. That is not done via marketing cookies.",
+    },
+    {
+      title: "How to change your choice",
+      body: "Use Cookie settings on this page or clear site data in your browser. Questions: admin@formatexcel.online.",
+    },
+  ],
+  es: [
+    {
+      title: "Qué cubre esta política",
+      body: "Esta página explica las cookies y el almacenamiento similar en FormatExcel.online. Los Excel que abres en el formateador, el extractor y el mail merge se procesan en tu navegador. No subimos esos libros a nuestros servidores como parte del formateo.",
+    },
+    {
+      title: "Cookies y local storage necesarias",
+      body: "Usamos cookies/sesión para el inicio de sesión con Google, y local storage para idioma, tema, cupo diario de mail merge de invitados y tu preferencia de cookies. Son necesarias para que el sitio funcione.",
+    },
+    {
+      title: "Cookies de analítica (opcionales)",
+      body: "Si aceptas analítica, cargamos Google Analytics (gtag) para contar visitas y eventos. No incluye el contenido de tus Excel. Puedes rechazarla en Ajustes de cookies; entonces no se carga gtag.",
+    },
+    {
+      title: "Feedback y cuentas",
+      body: "Los mensajes de feedback y las plantillas Pro se guardan en nuestra base de datos cuando los envías o guardas una plantilla. Eso no va por cookies de marketing.",
+    },
+    {
+      title: "Cómo cambiar tu elección",
+      body: "Usa Ajustes de cookies en esta página o borra los datos del sitio en el navegador. Consultas: admin@formatexcel.online.",
+    },
+  ],
+};
+
 export function PrivacyContent() {
   const { t, locale } = useI18n();
   const sections = PRIVACY[locale];
@@ -173,6 +221,33 @@ export function TermsContent() {
         </section>
       ))}
     </article>
+    </main>
+  );
+}
+
+export function CookiePolicyContent() {
+  const { t, locale } = useI18n();
+  const cookieSections = COOKIES[locale];
+  return (
+    <main>
+      <article className="mx-auto w-full max-w-3xl flex-1 px-4 py-10">
+        <p className="text-sm text-muted-foreground">
+          <Link href="/" className="hover:text-foreground">
+            {t.legal.back}
+          </Link>
+        </p>
+        <h1 className="mt-4 text-3xl font-semibold tracking-tight">{t.legal.cookiesTitle}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t.legal.cookiesUpdated}</p>
+        {cookieSections.map((section) => (
+          <section key={section.title} className="mt-8">
+            <h2 className="text-lg font-medium">{section.title}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+          </section>
+        ))}
+        <div className="mt-10">
+          <OpenCookieSettingsButton />
+        </div>
+      </article>
     </main>
   );
 }

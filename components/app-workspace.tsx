@@ -8,7 +8,6 @@ import { MailMergeTool } from "@/components/mail-merge-tool";
 import { ManifestExtractorTool } from "@/components/manifest-extractor-tool";
 import { MyTemplates } from "@/components/my-templates";
 import { FaqSection } from "@/components/faq-section";
-import { PricingSection } from "@/components/pricing-section";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -50,13 +49,13 @@ export function AppWorkspace() {
           : t.hero.cardManifest;
 
   return (
-    <div className="flex min-h-full flex-1 flex-col">
+    <div className="flex min-h-full flex-1 flex-col border-t bg-muted/20">
       <main className="mx-auto flex w-full min-w-0 max-w-6xl flex-1 flex-col gap-10 px-4 py-8">
         <section id="workspace" className="scroll-mt-24">
           <Badge variant="outline">{t.hero.badge}</Badge>
-          <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight md:text-4xl">
+          <h2 className="mt-3 max-w-3xl text-2xl font-semibold tracking-tight md:text-3xl">
             {hero.title}
-          </h1>
+          </h2>
           <p className="mt-2 max-w-2xl text-base text-muted-foreground">{hero.description}</p>
         </section>
 
@@ -99,7 +98,6 @@ export function AppWorkspace() {
           </Card>
         </Tabs>
 
-        <PricingSection />
         <FaqSection />
       </main>
     </div>

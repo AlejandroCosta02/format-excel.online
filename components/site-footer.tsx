@@ -79,6 +79,11 @@ export function SiteFooter() {
                 {t.footer.privacy}
               </Link>
             </li>
+            <li>
+              <Link className="hover:text-foreground" href="/cookie-policy">
+                {t.footer.cookies}
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
