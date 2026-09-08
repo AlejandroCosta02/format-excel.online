@@ -1,18 +1,27 @@
 {
   "name": "FormatExcel.online",
   "short_name": "FormatExcel",
-  "description": "AI Excel Formatter, Manifest Extractor & Mail Merge",
+  "description": "Excel formatter, manifest extractor, and mail merge in the browser.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F8FAFC",
+  "background_color": "#ffffff",
   "theme_color": "#2563eb",
   "lang": "en",
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any"
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }

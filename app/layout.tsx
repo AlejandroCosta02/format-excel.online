@@ -27,7 +27,7 @@ const siteUrl = "https://formatexcel.online";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "FormatExcel | AI Excel Formatter, Manifest Extractor & Mail Merge",
+    default: "FormatExcel | Excel Formatter Online",
     template: "%s | FormatExcel",
   },
   description:
@@ -47,19 +47,24 @@ export const metadata: Metadata = {
     alternateLocale: ["es_ES"],
     url: siteUrl,
     siteName: "FormatExcel.online",
-    title: "FormatExcel | AI Excel Formatter, Manifest Extractor & Mail Merge",
+    title: "FormatExcel | Excel Formatter Online",
     description:
       "Automate your Excel files in seconds. Format spreadsheets, extract manifests, and send personalized mail merges effortlessly. Try it free!",
   },
   twitter: {
     card: "summary_large_image",
-    title: "FormatExcel | AI Excel Formatter, Manifest Extractor & Mail Merge",
+    title: "FormatExcel | Excel Formatter Online",
     description:
       "Automate your Excel files in seconds. Format spreadsheets, extract manifests, and send personalized mail merges effortlessly. Try it free!",
   },
   icons: {
-    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
-    apple: "/icon.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
   robots: { index: true, follow: true },
