@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Terms of Service",
   description:
     "Free vs Pro plans, acceptable use, disclaimers, and refund policy for FormatExcel.online.",
+  alternates: { canonical: "https://formatexcel.online/terms" },
 };
 
 export default function TermsPage() {

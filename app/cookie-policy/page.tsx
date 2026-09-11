@@ -5,6 +5,7 @@ export const metadata: Metadata = {
   title: "Cookie Policy",
   description:
     "How FormatExcel.online uses necessary storage and optional Google Analytics cookies. Spreadsheets stay in your browser.",
+  alternates: { canonical: "https://formatexcel.online/cookie-policy" },
 };
 
 export default function CookiePolicyPage() {
